@@ -1,12 +1,17 @@
-import AddPlantForm from '../../../components/Form/AddPlantForm'
+import AddPlantForm from "../../../components/Form/AddPlantForm";
 
 const AddPlant = () => {
+  const handleFormSubmit = (e) => {
+    e.preventDefault()
+    console.log(e.target);
+  };
+
   return (
     <div>
       {/* Form */}
-      <AddPlantForm />
+      <AddPlantForm handleFormSubmit={handleFormSubmit} />
     </div>
-  )
-}
+  );
+};
 
-export default AddPlant
+export default AddPlant;
