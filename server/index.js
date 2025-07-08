@@ -50,6 +50,7 @@ async function run() {
       const token = jwt.sign(email, process.env.ACCESS_TOKEN_SECRET, {
         expiresIn: '365d',
       })
+      // rules that we have to follow to make jwt work on production
       res
         .cookie('token', token, {
           httpOnly: true,
