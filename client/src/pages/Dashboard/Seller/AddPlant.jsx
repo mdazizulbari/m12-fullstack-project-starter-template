@@ -10,20 +10,30 @@ const AddPlant = () => {
     const description = form?.description?.value;
     const price = form?.price?.value;
     const quantity = form?.quantity?.value;
+
+    // put raw image in formData
     const image = form?.image?.files[0];
     const imageFormData = new FormData();
-    imageFormData.append("image", imageFormData);
-    console.log(image);
+    imageFormData.append("image", image);
+    // console.log(image);
 
-    const plantData = { name, category, description, price, quantity, image };
-    console.log(plantData);
+    // upload image in imgbb to get image url
     const { data } = await axios.post(
       `https://api.imgbb.com/1/upload?key=${
         import.meta.env.VITE_IMGBB_API_KEY
       }`,
       imageFormData
     );
-    console.log(data);
+    const imageUrl = data?.data?.display_url;
+    const plantData = {
+      name,
+      category,
+      description,
+      price,
+      quantity,
+      image: imageUrl,
+    };
+    console.table(plantData);
   };
 
   return (
