@@ -34,6 +34,7 @@ const AddPlant = () => {
         seller: {
           name: user?.displayName,
           email: user?.email,
+          image: user?.photoURL,
         },
       };
       // console.table(plantData);

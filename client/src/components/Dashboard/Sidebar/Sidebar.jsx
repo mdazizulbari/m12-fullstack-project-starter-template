@@ -14,11 +14,11 @@ import CustomerMenu from "./Menu/CustomerMenu";
 import logo from "../../../assets/images/logo-flat.png";
 const Sidebar = () => {
   const { logOut } = useAuth();
-  const [isActive, setActive] = useState(false);
+  const [isActive, setIsActive] = useState(false);
 
   // Sidebar Responsive Handler
   const handleToggle = () => {
-    setActive(!isActive);
+    setIsActive(!isActive);
   };
   return (
     <>

@@ -60,6 +60,13 @@ async function run() {
     res.send(result);
   });
 
+  // get a single plant data from db
+  app.get("/plant/:id", async (req, res) => {
+    const id = req.params.id;
+    const result = await plantsCollection.findOne({ _id: new ObjectId(id) });
+    res.send(result);
+  });
+
   try {
     // Generate jwt token
     app.post("/jwt", async (req, res) => {
