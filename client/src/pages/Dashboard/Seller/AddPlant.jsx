@@ -22,7 +22,7 @@ const AddPlant = () => {
 
     try {
       // image url response from imgbb
-      const imageUrl = await imageUpload(image);
+      // const imageUrl = await imageUpload(image);
 
       const plantData = {
         name,
@@ -30,7 +30,7 @@ const AddPlant = () => {
         description,
         price,
         quantity,
-        image: imageUrl,
+        // image: imageUrl,
         seller: {
           name: user?.displayName,
           email: user?.email,
@@ -41,19 +41,23 @@ const AddPlant = () => {
         `${import.meta.env.VITE_API_URL}/add-plant`,
         plantData
       );
-      // console.log(data);
-      toast.success("Plant data added successfully")
+      console.table(data);
+      toast.success("Plant data added successfully");
+      form.reset();
     } catch (err) {
       console.log(err);
     } finally {
-      isUploading(false);
+      setIsUploading(false);
     }
   };
 
   return (
     <div>
       {/* Form */}
-      <AddPlantForm handleFormSubmit={handleFormSubmit} />
+      <AddPlantForm
+        isUploading={isUploading}
+        handleFormSubmit={handleFormSubmit}
+      />
     </div>
   );
 };
