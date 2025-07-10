@@ -25,6 +25,11 @@ const AddPlant = () => {
       image: imageUrl,
     };
     console.table(plantData);
+    const { data } = await axios.post(
+      `${import.meta.env.VITE_API_URL}/add-plant`,
+      plantData
+    );
+    console.log(data);
   };
 
   return (
