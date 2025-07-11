@@ -8,6 +8,8 @@ import toast from "react-hot-toast";
 const AddPlant = () => {
   const { user } = useAuth();
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadedImage, setUploadedImage] = useState();
+  const [imageUploadError, setImageUploadError] = useState(false);
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
@@ -21,16 +23,13 @@ const AddPlant = () => {
     const image = form?.image?.files[0];
 
     try {
-      // image url response from imgbb
-      // const imageUrl = await imageUpload(image);
-
       const plantData = {
         name,
         category,
         description,
         price,
         quantity,
-        // image: imageUrl,
+        image: uploadedImage,
         seller: {
           name: user?.displayName,
           email: user?.email,
@@ -52,12 +51,29 @@ const AddPlant = () => {
     }
   };
 
+  const handleImageUpload = async (e) => {
+    e.preventDefault();
+    const image = e.target.files[0];
+    console.log(image);
+    try {
+      // image url response from imgbb
+      const imageUrl = await imageUpload(image);
+      console.log(imageUrl);
+      setUploadedImage(imageUrl);
+    } catch (err) {
+      setImageUploadError("Image Upload Failed");
+      console.log(err);
+    }
+  };
+
   return (
     <div>
       {/* Form */}
       <AddPlantForm
         isUploading={isUploading}
         handleFormSubmit={handleFormSubmit}
+        uploadedImage={uploadedImage}
+        handleImageUpload={handleImageUpload}
       />
     </div>
   );

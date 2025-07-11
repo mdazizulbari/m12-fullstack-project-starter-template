@@ -6,10 +6,11 @@ import { useState } from "react";
 import { useLoaderData } from "react-router";
 
 const PlantDetails = () => {
+  const [isOpen, setIsOpen] = useState(false);
   const plant = useLoaderData();
+  if (!plant || typeof plant !== "object") return <p>Sorry Bro</p>;
   const { name, description, category, quantity, price, _id, seller, image } =
     plant || {};
-  let [isOpen, setIsOpen] = useState(false);
 
   const closeModal = () => {
     setIsOpen(false);
@@ -77,7 +78,7 @@ const PlantDetails = () => {
           </div>
           <hr className="my-6" />
           <div className="flex justify-between">
-            <p className="font-bold text-3xl text-gray-500">Price: 10$</p>
+            <p className="font-bold text-3xl text-gray-500">Price: {price}$</p>
             <div>
               <Button onClick={() => setIsOpen(true)} label="Purchase" />
             </div>
