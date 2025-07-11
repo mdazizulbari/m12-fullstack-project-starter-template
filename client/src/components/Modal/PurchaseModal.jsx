@@ -1,4 +1,5 @@
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
+import { useEffect } from "react";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
@@ -22,15 +23,40 @@ const PurchaseModal = ({ plant, closeModal, user, isOpen }) => {
     plantImage: image,
   });
 
+  useEffect(() => {
+    setOrderData((previous) => {
+      return {
+        ...previous,
+      };
+    });
+  }, [user]);
+
   const handleQuantity = (value) => {
     const totalQuantity = Number(value);
     // console.log(typeof value, value);
     // console.log(typeof totalQuantity, totalQuantity);
     if (totalQuantity > quantity)
       return toast.error("You can't purchase more ");
+
     const calculatedPrice = totalQuantity * price;
     setSelectedQuantity(totalQuantity);
     setTotalPrice(calculatedPrice);
+
+    // setOrderData({
+    //   ...orderData,
+    //   price: calculatedPrice,
+    //   quantity: selectedQuantity,
+    // });
+    setOrderData((previous) => {
+      return {
+        ...previous,
+        price: calculatedPrice,
+        quantity: totalQuantity,
+      };
+    });
+  };
+  const handleOrder = () => {
+    console.log(orderData);
   };
 
   return (
@@ -93,6 +119,9 @@ const PurchaseModal = ({ plant, closeModal, user, isOpen }) => {
             <div className="mt-2">
               <p className="text-sm text-gray-500">Total price: {totalPrice}</p>
             </div>
+            <button className="px-2p py-1 bg-green-500" onClick={handleOrder}>
+              Order Now
+            </button>
           </DialogPanel>
         </div>
       </div>
