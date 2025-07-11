@@ -1,4 +1,5 @@
 const AddPlantForm = ({
+  imageUploadError,
   handleImageUpload,
   handleFormSubmit,
   uploadedImage,
@@ -92,7 +93,7 @@ const AddPlantForm = ({
                 <div className="flex gap-5 items-center w-max mx-auto text-center">
                   <label>
                     <input
-                    onChange={handleImageUpload}
+                      onChange={handleImageUpload}
                       className="text-sm cursor-pointer w-36 hidden"
                       type="file"
                       name="image"
@@ -104,7 +105,10 @@ const AddPlantForm = ({
                       Upload
                     </div>
                   </label>
-                  {uploadedImage && <img src={uploadedImage} className="w-26" />}
+                  {uploadedImage && (
+                    <img src={uploadedImage} className="w-26" />
+                  )}
+                  {imageUploadError && <p>{imageUploadError}</p>}
                 </div>
               </div>
             </div>

@@ -20,7 +20,6 @@ const AddPlant = () => {
     const description = form?.description?.value;
     const price = form?.price?.value;
     const quantity = form?.quantity?.value;
-    const image = form?.image?.files[0];
 
     try {
       const plantData = {
@@ -74,6 +73,7 @@ const AddPlant = () => {
         handleFormSubmit={handleFormSubmit}
         uploadedImage={uploadedImage}
         handleImageUpload={handleImageUpload}
+        imageUploadError={imageUploadError}
       />
     </div>
   );
