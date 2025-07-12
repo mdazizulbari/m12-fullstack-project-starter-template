@@ -24,11 +24,18 @@ const PurchaseModal = ({ plant, closeModal, user, isOpen }) => {
   });
 
   useEffect(() => {
-    setOrderData((previous) => {
-      return {
-        ...previous,
-      };
-    });
+    if (user) {
+      setOrderData((previous) => {
+        return {
+          ...previous,
+          customer: {
+            name: user?.displayName,
+            email: user?.email,
+            image: user?.photoURL,
+          },
+        };
+      });
+    }
   }, [user]);
 
   const handleQuantity = (value) => {
@@ -54,9 +61,6 @@ const PurchaseModal = ({ plant, closeModal, user, isOpen }) => {
         quantity: totalQuantity,
       };
     });
-  };
-  const handleOrder = () => {
-    console.log(orderData);
   };
 
   return (
@@ -119,10 +123,9 @@ const PurchaseModal = ({ plant, closeModal, user, isOpen }) => {
             <div className="mt-2">
               <p className="text-sm text-gray-500">Total price: {totalPrice}</p>
             </div>
-            <button className="px-2p py-1 bg-green-500" onClick={handleOrder}>
-              Order Now
-            </button>
           </DialogPanel>
+          {/* stripe checkout form */}
+          
         </div>
       </div>
     </Dialog>
