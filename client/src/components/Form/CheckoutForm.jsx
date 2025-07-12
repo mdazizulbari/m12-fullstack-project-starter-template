@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { ClipLoader } from "react-spinners";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import useAuth from "../../hooks/useAuth";
+import toast from "react-hot-toast";
 
 const CheckoutForm = ({ orderData, closeModal, totalPrice }) => {
   const { user } = useAuth();
@@ -63,7 +64,7 @@ const CheckoutForm = ({ orderData, closeModal, totalPrice }) => {
       setCardError(null);
     }
 
-    // taka katar pala
+    // collect the payment from customer
     const result = await stripe.confirmCardPayment(clientSecret, {
       payment_method: {
         card,
@@ -81,8 +82,19 @@ const CheckoutForm = ({ orderData, closeModal, totalPrice }) => {
     if (result?.paymentIntent?.status === "succeeded") {
       // save orderData in db
       orderData.transactionId = result?.paymentIntent?.id;
-      const { data } = axiosSecure.post("/order", orderData);
-      console.log(data);
+      try {
+        const { data } = axiosSecure.post("/order", orderData);
+        console.log(data);
+        if (data?.insertedId) {
+          toast.success("Order Placed Successfully");
+        }
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setProcessing(false);
+        setCardError(null);
+        closeModal();
+      }
       // update product quantity in db from plant collection
     }
     console.log(result);

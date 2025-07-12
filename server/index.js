@@ -46,6 +46,7 @@ const client = new MongoClient(process.env.MONGODB_URI, {
 async function run() {
   const db = client.db("plantdb");
   const plantsCollection = db.collection("plants");
+  const ordersCollection = db.collection("orders");
 
   // add a plant in db
   app.post("/add-plant", async (req, res) => {
@@ -91,6 +92,10 @@ async function run() {
   });
 
   // save order data in orders collection in db
+  app.post('/order',async(req,res)=>{
+    const orderData=req.body
+    const result=await ordersCollection
+  })
 
   try {
     // Generate jwt token
