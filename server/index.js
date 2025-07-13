@@ -93,18 +93,23 @@ async function run() {
   });
 
   // save or update a users info in db
-  app.post('/user',async(req,res)=>{
-    const userData=req.body
-    const result=await usersCollection.insertOne(userData)
-    res.send(result)
-  })
+  app.post("/user", async (req, res) => {
+    const userData = req.body;
+    userData.role = "customer";
+    userData.created_at = Date.now();
+    userData.last_loggedIn = Date.now();
+
+    // return console.log(userData);
+    const result = await usersCollection.insertOne(userData);
+    res.send(result);
+  });
 
   // save order data in orders collection in db
-  app.post('/order',async(req,res)=>{
-    const orderData=req.body
-    const result=await ordersCollection.insertOne(orderData)
-    res.send(result)
-  })
+  app.post("/order", async (req, res) => {
+    const orderData = req.body;
+    const result = await ordersCollection.insertOne(orderData);
+    res.send(result);
+  });
 
   try {
     // Generate jwt token
