@@ -94,7 +94,8 @@ async function run() {
   // save order data in orders collection in db
   app.post('/order',async(req,res)=>{
     const orderData=req.body
-    const result=await ordersCollection
+    const result=await ordersCollection.insertOne(orderData)
+    res.send(result)
   })
 
   try {

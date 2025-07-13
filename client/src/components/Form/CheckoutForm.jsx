@@ -83,7 +83,7 @@ const CheckoutForm = ({ orderData, closeModal, totalPrice }) => {
       // save orderData in db
       orderData.transactionId = result?.paymentIntent?.id;
       try {
-        const { data } = axiosSecure.post("/order", orderData);
+        const { data } = await axiosSecure.post("/order", orderData);
         console.log(data);
         if (data?.insertedId) {
           toast.success("Order Placed Successfully");
