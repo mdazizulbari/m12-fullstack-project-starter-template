@@ -47,6 +47,7 @@ async function run() {
   const db = client.db("plantdb");
   const plantsCollection = db.collection("plants");
   const ordersCollection = db.collection("orders");
+  const usersCollection = db.collection("users");
 
   // add a plant in db
   app.post("/add-plant", async (req, res) => {
@@ -90,6 +91,13 @@ async function run() {
     // console.log(plantId, quantity);
     res.send({ clientSecret: paymentIntent.client_secret });
   });
+
+  // save or update a users info in db
+  app.post('/user',async(req,res)=>{
+    const userData=req.body
+    const result=await usersCollection.insertOne(userData)
+    res.send(result)
+  })
 
   // save order data in orders collection in db
   app.post('/order',async(req,res)=>{
