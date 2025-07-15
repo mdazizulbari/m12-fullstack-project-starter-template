@@ -8,7 +8,7 @@ const Profile = () => {
   const { user } = useAuth();
   const [role, isRoleLoading] = useRole();
   if (isRoleLoading) return <LoadingSpinner />;
-  // console.log(user);
+  console.log(role);
 
   return (
     <div className="flex justify-center items-center h-screen">
