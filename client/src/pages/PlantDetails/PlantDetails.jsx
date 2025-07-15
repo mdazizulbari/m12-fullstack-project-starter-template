@@ -9,23 +9,36 @@ import useRole from "../../hooks/useRole";
 import LoadingSpinner from "../../components/Shared/LoadingSpinner";
 import axios from "axios";
 import { useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 const PlantDetails = () => {
+  const { id } = useParams();
   const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [role, isRoleLoading] = useRole();
   // const plant = useLoaderData();
 
   // fetch plant data without tanStack
-  const [plant, setPlant] = useState({});
-  const { id } = useParams();
-  const fetchPlant = async () => {
-    const { data } = await axios(`${import.meta.env.VITE_API_URL}/plant/${id}`);
-    setPlant(data);
-  };
-  useEffect(() => {
-    fetchPlant();
-  }, [id]);
+  // const [plant, setPlant] = useState({});
+  // const fetchPlant = async () => {
+  //   const { data } = await axios(`${import.meta.env.VITE_API_URL}/plant/${id}`);
+  //   setPlant(data);
+  // };
+  // useEffect(() => {
+  //   fetchPlant();
+  // }, [id]);
+
+  const query = useQuery({
+    queryKey: ["plant"],
+    queryFn: async () => {
+      const { data } = await axios(
+        `${import.meta.env.VITE_API_URL}/plant/${id}`
+      );
+      return data;
+    },
+  });
+  console.log(query);
+  const { data, isLoading, refetch } = query;
 
   const { name, description, category, quantity, price, _id, seller, image } =
     plant || {};
