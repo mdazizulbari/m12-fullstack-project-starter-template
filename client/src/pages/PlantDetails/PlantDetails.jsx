@@ -117,6 +117,7 @@ const PlantDetails = () => {
             plant={plant}
             isOpen={isOpen}
             user={user}
+            fetchPlant={fetchPlant}
           />
         </div>
       </div>

@@ -6,7 +6,8 @@ import useAxiosSecure from "../../hooks/useAxiosSecure";
 import useAuth from "../../hooks/useAuth";
 import toast from "react-hot-toast";
 
-const CheckoutForm = ({ orderData, closeModal, totalPrice }) => {
+const CheckoutForm = ({ fetchPlant, orderData, closeModal, totalPrice }) => {
+  fetchPlant();
   const { user } = useAuth();
   const stripe = useStripe();
   const axiosSecure = useAxiosSecure();
