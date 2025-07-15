@@ -166,7 +166,7 @@ async function run() {
         })
         .send({ success: true });
     });
-    
+
     // Logout
     app.get("/logout", async (req, res) => {
       try {
@@ -180,6 +180,18 @@ async function run() {
       } catch (err) {
         res.status(500).send(err);
       }
+    });
+
+    // get all users for admin
+    app.get("/all-users", verifyToken, async (req, res) => {
+      console.log(req.user);
+      const filter = {
+        email: {
+          $ne: req?.user?.email,
+        },
+      };
+      const result = await usersCollection.find(filter).toArray();
+      res.send(result);
     });
 
     // Send a ping to confirm a successful connection
