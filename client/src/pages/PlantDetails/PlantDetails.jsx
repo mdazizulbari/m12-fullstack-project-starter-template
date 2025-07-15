@@ -3,12 +3,11 @@ import Heading from "../../components/Shared/Heading";
 import Button from "../../components/Shared/Button/Button";
 import PurchaseModal from "../../components/Modal/PurchaseModal";
 import { useState } from "react";
-import { useLoaderData, useParams } from "react-router";
+import { useParams } from "react-router";
 import useAuth from "../../hooks/useAuth";
 import useRole from "../../hooks/useRole";
 import LoadingSpinner from "../../components/Shared/LoadingSpinner";
 import axios from "axios";
-import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 
 const PlantDetails = () => {
@@ -29,7 +28,7 @@ const PlantDetails = () => {
   // }, [id]);
 
   const query = useQuery({
-    queryKey: ["plant"],
+    queryKey: ["plant", id],
     queryFn: async () => {
       const { data } = await axios(
         `${import.meta.env.VITE_API_URL}/plant/${id}`
@@ -38,12 +37,12 @@ const PlantDetails = () => {
     },
   });
   console.log(query);
-  const { data, isLoading, refetch } = query;
+  const { data: plant, isLoading, refetch } = query;
 
   const { name, description, category, quantity, price, _id, seller, image } =
     plant || {};
 
-  if (isRoleLoading) return <LoadingSpinner />;
+  if (isRoleLoading || isLoading) return <LoadingSpinner />;
   if (!plant || typeof plant !== "object") return <p>Sorry Bro</p>;
 
   const closeModal = () => {
@@ -130,7 +129,7 @@ const PlantDetails = () => {
             plant={plant}
             isOpen={isOpen}
             user={user}
-            fetchPlant={fetchPlant}
+            fetchPlant={refetch}
           />
         </div>
       </div>
