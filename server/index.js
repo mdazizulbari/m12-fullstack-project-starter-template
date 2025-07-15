@@ -96,18 +96,57 @@ async function run() {
   app.post("/user", async (req, res) => {
     const userData = req.body;
     userData.role = "customer";
-    userData.created_at = Date.now();
-    userData.last_loggedIn = Date.now();
+    userData.created_at = new Date().toISOString();
+    userData.last_loggedIn = new Date().toISOString();
+
+    const query = {
+      email: userData?.email,
+    };
+    const alreadyExists = await usersCollection.findOne(query);
+
+    console.log("User already exists: ", !!alreadyExists);
+    if (!!alreadyExists) {
+      console.log("Updating user data");
+      const result = await usersCollection.updateOne(query, {
+        $set: { last_loggedIn: new Date().toISOString() },
+      });
+      return res.send(result);
+    }
 
     // return console.log(userData);
+    console.log("Creating user data");
     const result = await usersCollection.insertOne(userData);
     res.send(result);
+  });
+
+  // get a user's role
+  app.get("/user/role/:email", async (req, res) => {
+    const email = req.params.email;
+    const result = await usersCollection.findOne({ email });
+    if (!result) return res.status(404).send({ message: "User not found" });
+    res.send({ role: result?.role });
   });
 
   // save order data in orders collection in db
   app.post("/order", async (req, res) => {
     const orderData = req.body;
     const result = await ordersCollection.insertOne(orderData);
+    res.send(result);
+  });
+
+  // update plant quantity(increase/decrease)
+  app.patch("/quantity-update/:id", async (req, res) => {
+    const id = req.params.id;
+    const { quantityToUpdate, status } = req.body;
+    const filter = { _id: new ObjectId(id) };
+    let updateDoc = {
+      $inc: {
+        quantity: status === "increase" ? quantityToUpdate : -quantityToUpdate,
+      },
+    };
+    const result = await plantsCollection.updateOne(filter, updateDoc);
+    console.log(result);
+    console.log(quantityToUpdate, status);
     res.send(result);
   });
 
@@ -127,6 +166,7 @@ async function run() {
         })
         .send({ success: true });
     });
+    
     // Logout
     app.get("/logout", async (req, res) => {
       try {

@@ -28,11 +28,9 @@ const Login = () => {
         email: result?.user?.email,
         image: result?.user?.photoURL,
       };
-      // console.log(userData);
-      // console.log({ userData });
 
       // update user
-      await saveUserInDb({ userData });
+      await saveUserInDb(userData);
 
       navigate(from, { replace: true });
       toast.success("Login Successful");
@@ -46,7 +44,17 @@ const Login = () => {
   const handleGoogleSignIn = async () => {
     try {
       //User Registration using google
-      await signInWithGoogle();
+      const result = await signInWithGoogle();
+
+      const userData = {
+        name: result?.user?.displayName,
+        email: result?.user?.email,
+        image: result?.user?.photoURL,
+      };
+
+      // update user
+      await saveUserInDb(userData);
+
       navigate(from, { replace: true });
       toast.success("Login Successful");
     } catch (err) {

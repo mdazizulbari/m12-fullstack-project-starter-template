@@ -88,6 +88,11 @@ const CheckoutForm = ({ orderData, closeModal, totalPrice }) => {
         if (data?.insertedId) {
           toast.success("Order Placed Successfully");
         }
+        const { data: result } = await axiosSecure.patch(
+          `/quantity-update/${orderData?.plantId}`,
+          { quantityToUpdate: orderData?.quantity, status: "decrease" }
+        );
+        console.log(result);
       } catch (err) {
         console.log(err);
       } finally {

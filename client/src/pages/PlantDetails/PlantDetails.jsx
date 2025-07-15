@@ -3,16 +3,35 @@ import Heading from "../../components/Shared/Heading";
 import Button from "../../components/Shared/Button/Button";
 import PurchaseModal from "../../components/Modal/PurchaseModal";
 import { useState } from "react";
-import { useLoaderData } from "react-router";
+import { useLoaderData, useParams } from "react-router";
 import useAuth from "../../hooks/useAuth";
+import useRole from "../../hooks/useRole";
+import LoadingSpinner from "../../components/Shared/LoadingSpinner";
+import axios from "axios";
+import { useEffect } from "react";
 
 const PlantDetails = () => {
   const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
-  const plant = useLoaderData();
-  if (!plant || typeof plant !== "object") return <p>Sorry Bro</p>;
+  const [role, isRoleLoading] = useRole();
+  // const plant = useLoaderData();
+
+  // fetch plant data without tanStack
+  const [plant, setPlant] = useState({});
+  const { id } = useParams();
+  const fetchPlant = async () => {
+    const { data } = await axios(`${import.meta.env.VITE_API_URL}/plant/${id}`);
+    setPlant(data);
+  };
+  useEffect(() => {
+    fetchPlant();
+  }, [id]);
+
   const { name, description, category, quantity, price, _id, seller, image } =
     plant || {};
+
+  if (isRoleLoading) return <LoadingSpinner />;
+  if (!plant || typeof plant !== "object") return <p>Sorry Bro</p>;
 
   const closeModal = () => {
     setIsOpen(false);
@@ -83,7 +102,9 @@ const PlantDetails = () => {
             <p className="font-bold text-3xl text-gray-500">Price: {price}$</p>
             <div>
               <Button
-                disabled={!user || user?.email=== seller?.email}
+                disabled={
+                  !user || role !== "customer" || user?.email === seller?.email
+                }
                 onClick={() => setIsOpen(true)}
                 label={user ? "Purchase" : "Login to purchase"}
               />
