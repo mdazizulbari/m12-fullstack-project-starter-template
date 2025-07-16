@@ -229,13 +229,50 @@ async function run() {
     );
 
     // admin stats
-    app.get("/admin-stats" , async (req, res) => {
+    app.get("/admin-stats", async (req, res) => {
       // const totalUsers = (await usersCollection.find().toArray()).length;
       // other options provided by MongoDB
       // const totalUsers = await usersCollection.countDocuments({ role: admin });
       // this one works slow but the one shown below is fast
       const totalUsers = await usersCollection.estimatedDocumentCount();
-      res.send({ totalUsers });
+      const totalOrders = await ordersCollection.estimatedDocumentCount();
+      const totalPlants = await plantsCollection.estimatedDocumentCount();
+
+      // mongodb aggregation
+      const result = await ordersCollection
+        .aggregate([
+          {
+            $addFields: {
+              createdAt: { $toDate: "$_id" },
+            },
+          },
+          {
+            $group: {
+              _id: {
+                $dateToString: {
+                  format: "%Y-%m-%d",
+                  date: "$createdAt",
+                },
+              },
+              totalRevenue: { $sum: "$price" },
+              totalOrders: { $sum: 1 },
+            },
+          },
+        ])
+        .toArray();
+
+      const barChartData = result.map((data) => ({
+        data: data._id,
+        totalRevenue: data.totalRevenue,
+        totalOrders: data.totalOrders,
+      }));
+      const totalRevenue = result.reduce(
+        SubmitEvent,
+        (data) => sum + data?.totalRevenue,
+        0
+      );
+
+      res.send(totalUsers, totalPlants, totalOrders, barChartData);
     });
 
     // Send a ping to confirm a successful connection
