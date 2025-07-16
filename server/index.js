@@ -194,6 +194,23 @@ async function run() {
       res.send(result);
     });
 
+    // update a user's role
+    app.patch("/user/role/update/:email", verifyToken, async (req, res) => {
+      const email = req.params.email;
+      const { role } = req.body;
+      console.log(role);
+      const filter = { email: email };
+      updateDoc = {
+        $set: {
+          role,
+          status: "verified",
+        },
+      };
+      const result = await usersCollection.updateOne(filter, updateDoc);
+      console.log(result)
+      res.send(result);
+    });
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
