@@ -151,6 +151,15 @@ async function run() {
   });
 
   try {
+    const verifyAdmin = async (req, res, next) => {
+      const email = req?.user?.email;
+      const user = await usersCollection.findOne({email});
+      if(!user||user?.role !=="admin"){
+        
+      }
+      next();
+    };
+
     // Generate jwt token
     app.post("/jwt", async (req, res) => {
       const email = req.body;
@@ -229,24 +238,26 @@ async function run() {
     );
 
     // admin stats
-    app.get("/admin-stats", async (req, res) => {
+    app.get("/admin-stats", verifyToken, verifyAdmin, async (req, res) => {
       // const totalUsers = (await usersCollection.find().toArray()).length;
       // other options provided by MongoDB
       // const totalUsers = await usersCollection.countDocuments({ role: admin });
       // this one works slow but the one shown below is fast
       const totalUsers = await usersCollection.estimatedDocumentCount();
-      const totalOrders = await ordersCollection.estimatedDocumentCount();
+      const orders = await ordersCollection.estimatedDocumentCount();
       const totalPlants = await plantsCollection.estimatedDocumentCount();
 
       // mongodb aggregation
       const result = await ordersCollection
         .aggregate([
           {
+            // convert id into data
             $addFields: {
               createdAt: { $toDate: "$_id" },
             },
           },
           {
+            // group data by data
             $group: {
               _id: {
                 $dateToString: {
@@ -254,25 +265,27 @@ async function run() {
                   date: "$createdAt",
                 },
               },
-              totalRevenue: { $sum: "$price" },
-              totalOrders: { $sum: 1 },
+              revenue: { $sum: "$price" },
+              orders: { $sum: 1 },
             },
           },
         ])
         .toArray();
 
       const barChartData = result.map((data) => ({
-        data: data._id,
-        totalRevenue: data.totalRevenue,
-        totalOrders: data.totalOrders,
+        date: data._id,
+        revenue: data.revenue,
+        orders: data.orders,
       }));
-      const totalRevenue = result.reduce(
-        SubmitEvent,
-        (data) => sum + data?.totalRevenue,
-        0
-      );
+      const totalRevenue = result.reduce((sum, data) => sum + data?.revenue, 0);
 
-      res.send(totalUsers, totalPlants, totalOrders, barChartData);
+      res.send({
+        totalUsers,
+        totalPlants,
+        barChartData,
+        orders,
+        totalRevenue,
+      });
     });
 
     // Send a ping to confirm a successful connection
