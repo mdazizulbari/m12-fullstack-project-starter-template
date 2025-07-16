@@ -14,7 +14,15 @@ const UserDataRow = ({ refetch, user }) => {
         <p className="text-gray-900 whitespace-no-wrap">{role}</p>
       </td>
       <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-        <p className="text-red-500 whitespace-no-wrap">
+        <p
+          className={`${
+            status === "requested"
+              ? "text-yellow-500"
+              : status === "verified"
+              ? "text-green-500"
+              : "text-red-500"
+          }whitespace-no-wrap`}
+        >
           {status ? status : "Unavailable"}
         </p>
       </td>

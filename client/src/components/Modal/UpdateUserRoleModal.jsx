@@ -1,17 +1,18 @@
 import { Button, Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import toast from "react-hot-toast";
 
 const UpdateUserRoleModal = ({
   isOpen,
-  refetch,
+  // refetch,
   setIsOpen,
   role,
   userEmail,
 }) => {
   const axiosSecure = useAxiosSecure();
+  const queryClient = useQueryClient();
   const [updatedRole, setUpdatedRole] = useState(role);
   function close() {
     setIsOpen(false);
@@ -29,9 +30,12 @@ const UpdateUserRoleModal = ({
     },
     onSuccess: (data) => {
       console.log(data);
-      refetch();
+      // refetch();
       toast.success("User role updated successfully");
       setIsOpen(false);
+
+      // invalidate query
+      queryClient.invalidateQueries(["users"]);
     },
     onError: (error) => {
       console.log(error);
@@ -67,7 +71,7 @@ const UpdateUserRoleModal = ({
                 <div className="">
                   <select
                     value={updatedRole}
-                    onChange={(e) => setUpdatedRole(e.target.vale)}
+                    onChange={(e) => setUpdatedRole(e.target.value)}
                     name="role"
                     id=""
                     className="w-full rounded-2xl my-3 border border-gray-200 px-2 py-3"

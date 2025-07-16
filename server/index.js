@@ -198,7 +198,6 @@ async function run() {
     app.patch("/user/role/update/:email", verifyToken, async (req, res) => {
       const email = req.params.email;
       const { role } = req.body;
-      console.log(role);
       const filter = { email: email };
       updateDoc = {
         $set: {
@@ -207,8 +206,36 @@ async function run() {
         },
       };
       const result = await usersCollection.updateOne(filter, updateDoc);
-      console.log(result)
+      console.log(role, result);
       res.send(result);
+    });
+
+    // become seller request
+    app.patch(
+      "/become-seller-request/:email",
+      verifyToken,
+      async (req, res) => {
+        const email = req.params.email;
+        const filter = { email: email };
+        updateDoc = {
+          $set: {
+            status: "Requested",
+          },
+        };
+        const result = await usersCollection.updateOne(filter, updateDoc);
+        console.log(result);
+        res.send(result);
+      }
+    );
+
+    // admin stats
+    app.get("/admin-stats" , async (req, res) => {
+      // const totalUsers = (await usersCollection.find().toArray()).length;
+      // other options provided by MongoDB
+      // const totalUsers = await usersCollection.countDocuments({ role: admin });
+      // this one works slow but the one shown below is fast
+      const totalUsers = await usersCollection.estimatedDocumentCount();
+      res.send({ totalUsers });
     });
 
     // Send a ping to confirm a successful connection
