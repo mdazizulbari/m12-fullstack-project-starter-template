@@ -10,18 +10,16 @@ const port = process.env.PORT || 3000;
 const app = express();
 // middleware
 const corsOptions = {
-  origin: ["http://localhost:5173", "http://localhost:5174"],
+  origin: ["https://conceptual12.netlify.app"],
   credentials: true,
   optionSuccessStatus: 200,
 };
 app.use(cors(corsOptions));
-
 app.use(express.json());
 app.use(cookieParser());
 
 const verifyToken = async (req, res, next) => {
   const token = req.cookies?.token;
-
   if (!token) {
     return res.status(401).send({ message: "unauthorized access" });
   }
@@ -327,7 +325,7 @@ async function run() {
     });
 
     // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
+    // await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
     );
